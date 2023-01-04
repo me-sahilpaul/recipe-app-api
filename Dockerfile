@@ -1,28 +1,57 @@
+
+# Selecting Container Image
+
 FROM python:3.9-alpine3.13
-LABEL maintainer="sahil paul mamman"
+LABEL maintainer="Sahil Paul Mamman"
+
+# Setting Environment Variable To Unbuffer The Output From Python
 
 ENV PYTHONUNBUFFERED 1
+
+
+# Copying Local Files to Container Volume 
 
 COPY ./requirements.txt /tmp/requirements.txt
 COPY ./requirements.dev.txt /tmp/requirements.dev.txt
 COPY ./app /app
+
+# Setting Work Directory
+
 WORKDIR /app
+
+# Setting / Exposing port for communication
+
 EXPOSE 8000
 
+
+# Setting Development Environment variable to control platform 
+
 ARG DEV=false
+
+
+# Running Commands To Install All Project Dependencies 
+
 RUN python -m venv /py && \
     /py/bin/pip install --upgrade pip && \
+    apk add --update --no-cache postgresql-client && \
+    apk add --update --no-cache --virtual .tmp-build-deps \
+        build-base postgresql-dev musl-dev && \
     /py/bin/pip install -r /tmp/requirements.txt && \
     if [ $DEV = "true" ]; \
         then /py/bin/pip install -r /tmp/requirements.dev.txt ; \
     fi && \
     rm -rf /tmp && \
+    apk del .tmp-build-deps && \
     adduser \
         --disabled-password \
         --no-create-home \
         django-user
 
+# Setting Path Variable With Environment 
+
 ENV PATH="/py/bin:$PATH"
+
+# Setting user as django-user
 
 USER django-user
 
