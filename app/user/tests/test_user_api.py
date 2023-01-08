@@ -124,7 +124,7 @@ class PrivateUserApiTests(TestCase):
         self.user = create_user(
             email='test@example.com',
             password='testpass123',
-            name = 'Test Name',
+            name = 'Test Example',
         )
         self.client = APIClient()
         self.client.force_authenticate(user=self.user)
@@ -141,7 +141,7 @@ class PrivateUserApiTests(TestCase):
 
     def test_post_me_not_allowed(self):
         """Test Post is not allowed for the me endpoint."""
-        res = self.client.post(ME_URL)
+        res = self.client.post(ME_URL, {})
 
         self.assertEqual(res.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
     
@@ -154,4 +154,6 @@ class PrivateUserApiTests(TestCase):
         self.user.refresh_from_db()
         self.assertEqual(self.user.name, payload['name'])
         self.assertTrue(self.user.password, payload['password'])
-        self.assertEqual(res.status_code, status.HTTP_200_OK) 
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+
+    
