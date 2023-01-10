@@ -38,10 +38,10 @@ class TagsViewSets(mixins.UpdateModelMixin,
                     mixins.DestroyModelMixin):
     """Manage Tags in the database"""
     serializer_class = serializers.TagSerializer
-    queryset = Tag.objects.all().order_by('-id')
+    queryset = Tag.objects.all()
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         """Retrieve Tags for an authenticated user"""
-        return Tag.objects.filter(user=self.request.user).order_by('-id')
+        return self.queryset.filter(user=self.request.user).order_by('-name')

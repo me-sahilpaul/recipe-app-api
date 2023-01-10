@@ -248,7 +248,7 @@ class PrivateRecipeApiTests(TestCase):
         """Test Creating tag when updating a recipe"""
         recipe = create_recipe(user = self.user)
 
-        payload = {'tag' : [{'name': 'lunch'}]}
+        payload = {'tags' : [{'name': 'lunch'}]}
         url = detail_url(recipe.id)
         res = self.client.patch(url, payload, format='json')
 
@@ -268,7 +268,7 @@ class PrivateRecipeApiTests(TestCase):
         res = self.client.patch(url, payload, format = 'json')
 
 
-        self.assertEquals(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertIn(tag_lunch, recipe.tags.all())
         self.assertNotIn(tag_breakfast, recipe.tags.all())
 
