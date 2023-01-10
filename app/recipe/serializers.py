@@ -49,8 +49,8 @@ class RecipeSerializer(serializers.ModelSerializer):
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
 
-            instance.save()
-            return instance
+        instance.save()
+        return instance
 
 class RecipeDetailSerializer(RecipeSerializer):
     """Serializer for recipe detail. """

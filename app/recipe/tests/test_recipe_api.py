@@ -137,8 +137,6 @@ class PrivateRecipeApiTests(TestCase):
     def test_full_update(self):
         orignal={
         'title':'Sample Recipe Title',
-        'time_minutes':22,
-        'price':Decimal('5.75'),
         'description':'Sample Description',
         'link':'http://www.example.com/',
         }
@@ -152,14 +150,15 @@ class PrivateRecipeApiTests(TestCase):
         'description':'Sample Modified',
         'link':'http://www.example.com/modified',
         }
-        url = detail_url(recipe_id=recipe.id)
+        url = detail_url(recipe.id)
         res = self.client.put(url, modified)
-        self.assertEqual(recipe.user, self.user)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
         recipe.refresh_from_db()
+
         for key, value in modified.items():
             self.assertEqual(getattr(recipe, key),value)
 
-        self.assertEqual(res.status_code,status.HTTP_200_OK)
+        self.assertEqual(recipe.user, self.user )
 
     def test_update_user_returns_error(self):
         """Updating user generates error"""
