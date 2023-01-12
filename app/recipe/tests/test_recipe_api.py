@@ -204,7 +204,6 @@ class PrivateRecipeApiTests(TestCase):
             'tags' : [{'name':'Thai'},{'name':'Dinner'}]
         }
         res = self.client.post(RECIPES_URL, payload, format='json')
-
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
         recipes = Recipe.objects.filter(user = self.user)
         self.assertEqual(recipes.count(), 1 )
@@ -247,7 +246,7 @@ class PrivateRecipeApiTests(TestCase):
         """Test Creating tag when updating a recipe"""
         recipe = create_recipe(user = self.user)
 
-        payload = {'tags' : [{'name': 'lunch'}]}
+        payload = {'tags' : [{'name': 'Lunch'}]}
         url = detail_url(recipe.id)
         res = self.client.patch(url, payload, format='json')
 
