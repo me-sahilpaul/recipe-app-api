@@ -34,8 +34,12 @@ def create_recipe(user, **params):
     return Recipe.objects.create(user = user, **params)
 
 def detail_url(ingredient_id):
-    """return Detail url of the recipe with ID provided"""
+    """return Detail url of the Ingredient with ID provided"""
     return reverse('recipe:ingredients-detail',args=[ingredient_id])
+
+def detail_recipe_url(recipe_id):
+    """Return Detail Url of the recipe with ID provided"""
+    return reverse('recipe:recipe-detail',args=[recipe_id])
 
 class PublicIngredientsApiTests(TestCase):
     """ Test auth is required for retrieving ingredients."""
@@ -99,7 +103,7 @@ class PrivateIngredientsApiTest(TestCase):
         new_ingredients = {'ingredients' : [{'name':'sugar'},{'name':'flour'}]}
         payload.update(new_ingredients)
         
-        url = detail_url(res.data['id'])
+        url = detail_recipe_url(res.data['id'])
         res = self.client.put(url, payload, format='json')
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
@@ -128,15 +132,16 @@ class PrivateIngredientsApiTest(TestCase):
 
         new_ingredient = {'ingredients': [{'name':'honey'}]}
 
-        url =  detail_url(recipe_id)
+        url =  detail_recipe_url(recipe_id)
         res = self.client.patch(url, new_ingredient, format = 'json')
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         
         recipe_obj = Recipe.objects.filter(id=recipe_id, user = self.user)
         recipe = recipe_obj[0]
-        print(recipe.ingredients.all())
+        
         self.assertEqual(len(recipe.ingredients.all()), 1)
+        
         for each_ingredient in new_ingredient['ingredients']:
             exists = recipe.ingredients.filter(
                 name = each_ingredient['name'],
@@ -148,11 +153,12 @@ class PrivateIngredientsApiTest(TestCase):
         """ Delete an Ingredient"""
         ingredient = Ingredients.objects.create(user = self.user, name = 'lettuce')
         url = detail_url(ingredient.id)
-        print (url)
+        
         res = self.client.delete(url)
         self.assertEqual(res.status_code, status.HTTP_204_NO_CONTENT)
-        ingredients = Ingredients.objects.filter(user=self.user)
-        self.assertFalse(ingredients.exists())
+        
+        ingredient = Ingredients.objects.filter(user=self.user)
+        self.assertFalse(ingredient.exists())
 
 
 
